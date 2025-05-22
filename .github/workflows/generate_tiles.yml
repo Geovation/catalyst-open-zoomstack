@@ -1,0 +1,55 @@
+name: Generate tiles
+
+on:
+  workflow_dispatch:
+  schedule: # Run every month
+    - cron: "0 0 1 * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: set up homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: install tippecanoe
+        run: brew install tippecanoe
+
+      - name: run download shell file
+        run: ./download.sh
+
+      - name: run the generate shell file
+        run: ./generate_tiles.sh
+
+      - name: check for changes
+        run: git status
+
+      - name: deploy tiles directory to azure storage container
+        uses: Azure/CLI@v1
+        with: 
+          inlineScript: |
+            az storage blob sync \
+              --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+              --container ${{ secrets.AZURE_STORAGE_CONTAINER }} \
+              --source ./tiles/ \
+              --delete-destination true
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
+      - name: set the metadata header for Content-Encoding to gzip
+        run: |
+          az storage blob update \
+            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER }} \
+            --content-encoding gzip
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
+      - name: delete the tiles directory
+        run: rm -rf tiles/
+
+      - name: delete the mbtiles file
+        run: rm -rf osopenzoomstack.mbtiles
