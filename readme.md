@@ -91,6 +91,10 @@ Compressed tiles could still be used with a host that doesn't support setting th
 
 The GitHub actions workflow job includes steps to an Azure Storage Container. This could be done through an automatic deployment - for now we'll give instructions for how to set them up in the portal.
 
+## Steps for Azure Storage
+
+Coming soon.
+
 ## Automation
 
 OS Open Zoomstack is updated quarterly. This repository includes a GitHub action which will run every month to refresh the data. A future enhancement will be to run daily and use the download API to check for newer data.
