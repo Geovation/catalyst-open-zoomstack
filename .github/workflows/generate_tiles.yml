@@ -31,20 +31,13 @@ jobs:
         uses: Azure/CLI@v1
         with: 
           inlineScript: |
-            az storage blob sync \
+            az storage blob upload-batch \
               --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
-              --container ${{ secrets.AZURE_STORAGE_CONTAINER }} \
-              --source ./tiles/ \
-              --delete-destination true
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-
-      - name: set the metadata header for Content-Encoding to gzip
-        run: |
-          az storage blob update \
-            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
-            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER }} \
-            --content-encoding gzip
+              --destination ${{ secrets.AZURE_STORAGE_CONTAINER }} \
+              --source tiles/ \
+              --pattern "*.pbf" \
+              --overwrite true
+              --content-encoding gzip
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
