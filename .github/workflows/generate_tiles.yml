@@ -36,7 +36,7 @@ jobs:
               --destination ${{ secrets.AZURE_STORAGE_CONTAINER }} \
               --source tiles/ \
               --pattern "*.pbf" \
-              --overwrite true
+              --overwrite true \
               --content-encoding gzip
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
