@@ -29,15 +29,14 @@ jobs:
 
       - name: deploy tiles directory to azure storage container
         uses: Azure/CLI@v1
-        with: 
+        with:
           inlineScript: |
-            az storage blob upload-batch \
+            az storage blob sync \
               --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
-              --destination ${{ secrets.AZURE_STORAGE_CONTAINER }} \
-              --source tiles/ \
-              --pattern "*.pbf" \
-              --overwrite true \
-              --content-encoding gzip
+              --container ${{ secrets.AZURE_STORAGE_CONTAINER }} \
+              --source ./tiles/ \
+              --delete-destination true
+              --content-encoding "gzip"
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
