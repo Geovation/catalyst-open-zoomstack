@@ -17,6 +17,11 @@ jobs:
         with:
           python-version: "3.x" # Use the latest Python 3 version
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
       # Run the update_latest_version.py script
       # This will update the latest_version.txt file with the latest version from the data hub
       - name: Update latest version
