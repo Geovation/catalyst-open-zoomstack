@@ -86,7 +86,7 @@ jobs:
         with:
           inlineScript: |
             az storage azcopy run-command azcopy copy "tiles/*" \
-              ${{ secrets.AZURE_CONTAINER_SAS }} \
+              "${{ secrets.AZURE_CONTAINER_SAS }}" \
               --recursive=true \
               --content-encoding="gzip" \
               --cache-control="max-age=86400"
