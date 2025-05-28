@@ -81,11 +81,9 @@ jobs:
       - name: run the generate shell file
         run: ./generate_tiles.sh
 
-      - name: copy the tiles to storage
-        uses: Azure/CLI@v1
-        with:
-          inlineScript: |
-            az storage azcopy run-command azcopy copy "tiles/*" \
+      - name: copy the tiles to storage with azcopy
+        run: |
+            azcopy copy "tiles/*" \
               "${{ secrets.AZURE_CONTAINER_SAS }}" \
               --recursive=true \
               --content-encoding="gzip" \
