@@ -81,21 +81,15 @@ jobs:
       - name: run the generate shell file
         run: ./generate_tiles.sh
 
-      - name: check for changes
-        run: git status
-
-      - name: deploy tiles directory to azure storage container
+      - name: copy the tiles to storage
         uses: Azure/CLI@v1
         with:
           inlineScript: |
-            az storage blob sync \
-              --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
-              --container ${{ secrets.AZURE_STORAGE_CONTAINER }} \
-              --source ./tiles/ \
-              --delete-destination true \
-              -- --content-encoding "gzip"
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+            az storage azcopy run-command azcopy copy "tiles/*" \
+              ${{ secrets.AZURE_CONTAINER_SAS }} \
+              --recursive=true \
+              --content-encoding="gzip" \
+              --cache-control="max-age=86400"
 
       - name: delete the tiles directory
         run: rm -rf tiles/
