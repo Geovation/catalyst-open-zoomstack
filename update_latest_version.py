@@ -1,6 +1,6 @@
 """
-This script fetches the latest version number of OpenZoomstack from the OS Downloads API
-and saves it to a file named `latest_version.txt`.
+This script fetches the latest version number of OpenZoomstack from the 
+OS Downloads API and saves it to a file named `latest_version.txt`.
 """
 
 import requests
@@ -8,10 +8,9 @@ import requests
 
 def update_latest_openzoomstack_version():
     """
-    Makes the fetch request to the OS Downloads API to get the latest version of OpenZoomstack
-    and saves it to a file named `latest_version.txt`.
-    The version is formatted as YYYYMM for easier comparison.
-    If the request fails, it prints an error message.
+    Makes the fetch request to the OS Downloads API to get the latest version of OpenZoomstack and
+    saves it to a file named `latest_version.txt`. 
+    The version is formatted as YYYYMM. If the request fails it prints an error
     """
     api_url = "https://api.os.uk/downloads/v1/products/OpenZoomstack"
 
@@ -39,7 +38,6 @@ def update_latest_openzoomstack_version():
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching the latest version: {e}")
-        return None
 
 
 if __name__ == "__main__":
