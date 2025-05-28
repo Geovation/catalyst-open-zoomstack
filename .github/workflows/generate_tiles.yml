@@ -56,9 +56,19 @@ jobs:
             echo "download=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add current_version.txt
+          git commit -m "Update latest version to $LATEST_VERSION"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     outputs:
-      latest-version: ${{ steps.read_latest_version.outputs.latest_version }}
-      current-version: ${{ steps.read_version.outputs.current_version }}
+      latest-version: ${{ steps.read_latest_version.outputs.latest-version }}
+      current-version: ${{ steps.read_version.outputs.current-version }}
       download: ${{ steps.check_download.outputs.download }}
 
   download_and_generate_tiles:
@@ -106,7 +116,7 @@ jobs:
 
       - name: Update current version file
         run: |
-          echo "${{ needs.version_check.outputs.latest-version }}" > current_version.txt
+          echo -n "${{ needs.version_check.outputs.latest-version }}" > current_version.txt
 
       - name: Commit and push changes
         run: |
