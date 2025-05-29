@@ -9,36 +9,35 @@ jobs:
   version_check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.x" # Use the latest Python 3 version
+          python-version: "3.x"
 
-      - name: Install dependencies
+      - name: install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
       # Run the update_latest_version.py script
       # This will update the latest_version.txt file with the latest version from the data hub
-      - name: Update latest version
+      - name: update latest version
         run: |
           python update_latest_version.py
 
       # Read the latest version from the text file
       # Output the latest version to a variable latest_version
-      - name: Read latest version
+      - name: read latest version
         id: read_latest_version
         run: |
           LATEST_VERSION=$(cat latest_version.txt 2>/dev/null)
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
           echo "latest-version=$LATEST_VERSION" >> $GITHUB_OUTPUT
 
-      # Read the current version from the text file
-      # Output the current version to a variable current_version
+      # Read the current version from the text file and output to variable
       - name: Read current version
         id: read_version
         run: |
@@ -47,7 +46,7 @@ jobs:
 
       # If the LATEST_VERSION is different from the CURRENT_VERSION, set a boolean as a github output GITHUB_OUTPUT
       # If we have no current version, we assume we need to download
-      - name: Check if we need to download
+      - name: check download
         id: check_download
         run: |
           if [ $LATEST_VERSION != $CURRENT_VERSION ] || [ -z $CURRENT_VERSION ]; then
@@ -56,12 +55,13 @@ jobs:
             echo "download=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push changes
+      - name: update latest version
         run: |
+          git status
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add current_version.txt
-          git commit -m "Update latest version to $LATEST_VERSION"
+          git diff-index --quiet HEAD || git commit -m "Update latest version to $LATEST_VERSION"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -93,11 +93,11 @@ jobs:
 
       - name: copy the tiles to storage with azcopy
         run: |
-            azcopy copy "tiles/*" \
-              "${{ secrets.AZURE_CONTAINER_SAS }}" \
-              --recursive=true \
-              --content-encoding="gzip" \
-              --cache-control="max-age=86400"
+          azcopy copy "tiles/*" \
+            "${{ secrets.AZURE_CONTAINER_SAS }}" \
+            --recursive=true \
+            --content-encoding="gzip" \
+            --cache-control="max-age=86400"
 
       - name: delete the tiles directory
         run: rm -rf tiles/
