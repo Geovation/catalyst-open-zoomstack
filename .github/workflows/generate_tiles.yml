@@ -60,7 +60,7 @@ jobs:
           git status
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add current_version.txt
+          git add latest_version.txt
           git diff-index --quiet HEAD || git commit -m "Update latest version to $LATEST_VERSION"
           git push origin main
         env:
