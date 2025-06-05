@@ -120,10 +120,12 @@ jobs:
 
       - name: Commit and push changes
         run: |
+          git status
+          git pull origin main
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add current_version.txt
-          git commit -m "Update current version to ${{ needs.version_check.outputs.latest-version }}"
+          git diff-index --quiet HEAD || git commit -m "Update current version to ${{ needs.version_check.outputs.latest-version }}"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
